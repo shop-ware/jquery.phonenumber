@@ -37,12 +37,23 @@
         'international': formatInternational,
         'e164': formatE164
       };
+
       var self = this;
+
       this.$element.keypress(function(event) {
         self.processKeyPress(event);
       });
+
       this.$element.on('paste', function(event) {
         self.processPaste(event);
+      });
+
+      this.$element.on('change', function(event) {
+        var number = event.target.value;
+
+        if (number.length == 10) {
+          event.target.value = number.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+        }
       });
     },
     processKeyPress: function(event) {
@@ -55,6 +66,7 @@
         event.preventDefault();
       }
     },
+
     processPaste: function(event) {
       var self = this;
       setTimeout(function() {
@@ -103,6 +115,7 @@
       } else {
         var re = /^\d$/;
         return re.test(String.fromCharCode(event.which)) ||
+          re.test($('input[type="text"].customer-phone').val().slice(-1)) ||
           String.fromCharCode(event.which) === '+' ||
           String.fromCharCode(event.which) === '-';
       }
